@@ -1,0 +1,16 @@
+﻿{
+	"LocalizedLanguageName": "Deutsch (Deutschland)",
+	"DefaultLanguageName": "German (Germany)",
+	"LanguageCodeIetf": "de-DE",
+	"LanguageCodeIso639_1": "de",
+	"Translations": {
+		"Messages": {
+			"SayYes": "Ja!",
+			"SayNo": "Nein!"
+		},
+		"Captions": {
+			"MainTitle": "Meine Anwendung",
+			"PopupTitle": "Mein Popup"
+		}
+	}
+}
