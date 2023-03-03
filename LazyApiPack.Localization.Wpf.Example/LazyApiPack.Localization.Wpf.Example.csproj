@@ -16,8 +16,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LazyApiPack.Localization.Manager\LazyApiPack.Localization.Manager.csproj" />
-    <ProjectReference Include="..\LazyApiPack.Localization.Wpf\LazyApiPack.Localization.Wpf.csproj" />
+    <PackageReference Include="LazyApiPack.Localization.Manager" Version="0.0.1" />
+    <PackageReference Include="LazyApiPack.Localization.Wpf" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
