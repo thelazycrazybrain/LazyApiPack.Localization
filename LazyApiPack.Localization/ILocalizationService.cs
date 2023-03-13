@@ -27,7 +27,7 @@ namespace LazyApiPack.Localization
         /// <summary>
         /// Contains meta-data of all found translation files.
         /// </summary>
-        ReadOnlyDictionary<string, ILocalizationHeader> AvailableLocalizations { get; }
+        ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations { get; }
 
     }
 }
