@@ -4,23 +4,29 @@ using System.Diagnostics.CodeAnalysis;
 namespace LazyApiPack.Localization
 {
     /// <summary>
-    /// Provides a Localization Service
+    /// Provides a service for localization.
     /// </summary>
     public interface ILocalizationService : ILocalization
     {
+        /// <summary>
+        /// Fires when the localization has changed.
+        /// </summary>
         event LocalizationChangedEventHandler LocalizationChanged;
 
         /// <summary>
-        /// Loads the metadata from the translation files included in the localizationDictionaries.
+        /// Call this function after instantiation to initialize the service.
         /// </summary>
-        /// <param name="localizationDirectories">Path(s) where the service should look for localizations.</param>
-        /// <param name="searchPattern">Specifies a file name search pattern that is used to find localization files (e.g. *.lng or *.json).</param>
-        /// <param name="options">Options that are used to find pathes (e.g. options.IncludeSubDirectories).</param>
+        /// <param name="localizationDirectories">Files and / or directories that contain localization files.</param>
+        /// <param name="searchPattern">If you work with directories, this filter can be used to select specific localization files (e.g. *.json)</param>
+        /// <param name="options">If you work with directories, you can specify the search options (e.g. include subdirectories etc.)</param>
         void Initialize([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null);
         /// <summary>
         /// Gets or sets the current language.
         /// </summary>
         ILocalizationHeader? CurrentLocalization { get; set; }
+        /// <summary>
+        /// Contains meta-data of all found translation files.
+        /// </summary>
         ReadOnlyDictionary<string, ILocalizationHeader> AvailableLocalizations { get; }
 
     }
