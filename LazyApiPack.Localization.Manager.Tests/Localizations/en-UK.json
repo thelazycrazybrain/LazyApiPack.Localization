@@ -1,8 +1,10 @@
 ﻿{
+  "Priority": 0,
   "LocalizedLanguageName": "English (United Kingdom)",
   "DefaultLanguageName": "English (United Kingdom)",
   "LanguageCodeIetf": "en-UK",
   "LanguageCodeIso639_1": "en",
+  "IsRightToLeft": false,
   "Translations": {
     "Messages": {
       "SayYes": "Yes!",

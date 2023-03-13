@@ -1,5 +1,5 @@
 ﻿{
-	"Priority": 99999,
+	"Priority": 0,
 	"LocalizedLanguageName": "Deutsch (Deutschland)",
 	"DefaultLanguageName": "German (Germany)",
 	"LanguageCodeIetf": "de-DE",
@@ -7,12 +7,15 @@
 	"IsRightToLeft": false,
 	"Translations": {
 		"Messages": {
-			"SayYes": "Ja!",
+			"SayYes": "Jaaaaaaaa (override)!",
 			"SayNo": "Nein!"
 		},
 		"Captions": {
 			"MainTitle": "Meine Anwendung",
 			"PopupTitle": "Mein Popup"
+		},
+		"Alerts": {
+			"WarnLowPressure": "Achtung, geringer druck!"
 		}
 	}
 }

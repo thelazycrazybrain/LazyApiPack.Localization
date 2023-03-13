@@ -9,15 +9,18 @@ namespace LazyApiPack.Localization.Json
         [JsonIgnore]
         public string FilePath { get; set; }
         /// <inheritdoc/>
-
+        public int Priority { get; set; }
+        /// <inheritdoc/>
         public string LocalizedLanguageName { get; set; }
-
         /// <inheritdoc/>
         public string DefaultLanguageName { get; set; }
         /// <inheritdoc/>
         public string LanguageCodeIetf { get; set; }
         /// <inheritdoc/>
         public string LanguageCodeIso639_1 { get; set; }
+        /// <inheritdoc/>
+        public bool IsRightToLeft { get; set; }
+
     }
 
 

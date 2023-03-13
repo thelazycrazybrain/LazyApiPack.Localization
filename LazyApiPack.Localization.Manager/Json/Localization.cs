@@ -12,7 +12,7 @@ namespace LazyApiPack.Localization.Json
         /// <summary>
         /// Translations in format: Group - [][[Key -> Translation]] (e.g. Messages -> [][[ "SayYes", "Yes!"], ["SayNo"], "No!"])
         /// </summary>
-        public Dictionary<string, Dictionary<string, string>> Translations { get; set; }
+        public Dictionary<string, Dictionary<string, string>> Translations { get; set; } = new Dictionary<string, Dictionary<string, string>>();
 
         /// <inheritdoc />
         public string? GetTranslation([NotNull] string group, [NotNull] string id)
