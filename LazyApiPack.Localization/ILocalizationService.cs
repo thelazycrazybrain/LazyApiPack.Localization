@@ -19,7 +19,7 @@ namespace LazyApiPack.Localization
         /// <param name="localizationDirectories">Files and / or directories that contain localization files.</param>
         /// <param name="searchPattern">If you work with directories, this filter can be used to select specific localization files (e.g. *.json)</param>
         /// <param name="options">If you work with directories, you can specify the search options (e.g. include subdirectories etc.)</param>
-        void Initialize([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null);
+        void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null);
         /// <summary>
         /// Gets or sets the current language.
         /// </summary>
