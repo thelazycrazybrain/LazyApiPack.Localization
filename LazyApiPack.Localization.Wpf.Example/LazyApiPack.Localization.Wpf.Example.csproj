@@ -9,18 +9,25 @@
 	<Description>Provides a way to create and edit localization files.</Description>
 	<Authors>Jodie Watson</Authors>
 	<Copyright>Copyright (c) 2022-2023 Jodie Watson</Copyright>
-	<AssemblyVersion>0.0.1</AssemblyVersion>
-	<FileVersion>0.0.1</FileVersion>
+	<AssemblyVersion>0.0.2</AssemblyVersion>
+	<FileVersion>0.0.2</FileVersion>
 	<Version>$(AssemblyVersion)</Version>
 	  
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LazyApiPack.Localization.Manager" Version="0.0.1" />
     <PackageReference Include="LazyApiPack.Localization.Wpf" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LazyApiPack.Localization.Manager\LazyApiPack.Localization.Manager.csproj" />
+    <ProjectReference Include="..\LazyApiPack.Localization.Wpf\LazyApiPack.Localization.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Localizations\he.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Localizations\de-DE.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

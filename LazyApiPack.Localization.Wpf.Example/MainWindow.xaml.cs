@@ -29,14 +29,14 @@ namespace LazyApiPack.Localization.Wpf.Example
         {
             DataContext = this;
             // Bootstrap
-           
+
             LocalizerMarkupExtension.Initialize(Service);
             var root = IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var lPath = IO.Path.Combine(root, "Localizations");
 
 
-            Service.Initialize(new[] { lPath }, "*.json");
-            Service.CurrentLocalization = Service.AvailableLocalizations["de-DE"];
+            Service.AddLocalizations(new[] { lPath }, "*.json");
+            Service.CurrentLocalization = Service.AvailableLocalizations.First(l => l.LanguageCodeIetf == "de-DE");
 
 
             InitializeComponent();
@@ -44,12 +44,13 @@ namespace LazyApiPack.Localization.Wpf.Example
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if(Service.CurrentLocalization?.LanguageCodeIetf == "de-DE")
+            if (Service.CurrentLocalization?.LanguageCodeIetf == "en-UK")
             {
-                Service.CurrentLocalization = Service.AvailableLocalizations["en-UK"];
-            }else
+                Service.CurrentLocalization =Service.AvailableLocalizations.First(l => l.LanguageCodeIetf == "he");
+            }
+            else
             {
-                Service.CurrentLocalization = Service.AvailableLocalizations["de-DE"];
+                Service.CurrentLocalization =    Service.AvailableLocalizations.First(l => l.LanguageCodeIetf == "en-UK");
             }
         }
     }

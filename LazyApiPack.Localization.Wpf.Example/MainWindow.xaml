@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="{loc:Localizer Captions.MainTitle}" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Width="150" Click="Button_Click" />
+        <Button Content="{loc:Localizer Captions.MainTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="30" Width="800" Click="Button_Click" Margin="0,217,0,0" HorizontalContentAlignment="{loc:HorizontalAlignmentLocalizer}" />
         <ComboBox HorizontalAlignment="Right" VerticalAlignment="Top" Height="25" Width="150" ItemsSource="{Binding Service.AvailableLocalizations}" SelectedItem="{Binding Service.CurrentLangauge}" >
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type loci:ILocalizationHeader}">

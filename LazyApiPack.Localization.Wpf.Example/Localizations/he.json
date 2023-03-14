@@ -1,0 +1,17 @@
+﻿{
+	"LocalizedLanguageName": "עִברִית",
+	"DefaultLanguageName": "Hebrew",
+	"LanguageCodeIetf": "he",
+	"LanguageCodeIso639_1": "he",
+	"IsRightToLeft": true,
+	"Translations": {
+		"Messages": {
+			"SayYes": "!כן",
+			"SayNo": "!לא"
+		},
+		"Captions": {
+			"MainTitle": "התוכנית שלי",
+			"PopupTitle": "הפופאפ שלי"
+		}
+	}
+}
