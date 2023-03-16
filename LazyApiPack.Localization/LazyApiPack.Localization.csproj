@@ -8,14 +8,14 @@
 		<Authors>Jodie Watson</Authors>
 		<Copyright>Copyright (c) 2022-2023 Jodie Watson</Copyright>
 		<PackageOutputPath>C:\LocalNugets\LazyApiPack\$(OutputPath)</PackageOutputPath>
-		<AssemblyVersion>0.0.5</AssemblyVersion>
-		<FileVersion>0.0.5</FileVersion>
+		<AssemblyVersion>0.0.6</AssemblyVersion>
+		<FileVersion>0.0.6</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
 		<PackageProjectUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization</PackageProjectUrl>
 		<PackageReadmeFile>ReadMe.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization.git</RepositoryUrl>
 		<PackageTags>localization</PackageTags>
-		<PackageReleaseNotes>Supports right to left text and prioritizing localization files to enable merge functionality; Simplified service (AvailableLocalizations); Additional function added: Adding new language files while the service is running (Improves merge functionality)</PackageReleaseNotes>
+		<PackageReleaseNotes>Added support to load translations from an embedded resource.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
