@@ -14,8 +14,8 @@ new LocalizationService();
 ```
 after the instantiation, you need to initialize the service (AddLocalizations).
 
-### Function AddLocalizations
-This function initializes the service with the information it needs.
+### Function AddLocalizations (Files)
+This method is used to initialize the localization resources.
 
 **localizationDirectories**:
 A list of directories and files that contain your translation files.
@@ -23,3 +23,13 @@ A list of directories and files that contain your translation files.
 **searchPattern**: If you pass directories with `localizationDirectories`, you can pass a file filter (e.g. `*.json`)
 
 **options**: You can specify, how to deal with directories (e.g. find files in subdirectories etc.)
+
+### Function AddLocalizations (Embedded resources)
+To load localization files from an embedded resource, use the overloaded function.
+
+**Assembly^^: Specifies the assembly where the resources are located
+
+**localizationNamespaces**: Specifies the namespace (and subnamespaces) where the resources are located.
+
+**searchPattern**: If specified, only the files that match the searchPattern (e.g. Localization.*.json) are loaded.
+

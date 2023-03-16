@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace LazyApiPack.Localization.Json
 {
@@ -6,8 +7,16 @@ namespace LazyApiPack.Localization.Json
     /// <inheritdoc/>
     public class LocalizationHeader : ILocalizationHeader
     {
+        /// <summary>
+        /// Assembly that contains the embedded localization resource (For internal use only!).
+        /// </summary>
         [JsonIgnore]
-        public string FilePath { get; set; }
+        public Assembly? Assembly { get; set; }
+        /// <summary>
+        /// Path to the localization file (For internal use only!).
+        /// </summary>
+        [JsonIgnore]
+        public string Path { get; set; }
         /// <inheritdoc/>
         public int Priority { get; set; }
         /// <inheritdoc/>

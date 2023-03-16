@@ -5,13 +5,14 @@ using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Text.Json;
 using LazyApiPack.Collections.Extensions;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
-namespace LazyApiPack.Localization.Manager
-{
+namespace LazyApiPack.Localization.Manager {
 
     /// <inheritdoc/>
-    public class LocalizationService : ILocalizationService
-    {
+    public class LocalizationService : ILocalizationService {
         /// <inheritdoc/>
         public event LocalizationChangedEventHandler? LocalizationChanged;
         /// <summary>
@@ -21,8 +22,8 @@ namespace LazyApiPack.Localization.Manager
             = new List<ILocalizationHeader>();
         /// <inheritdoc/>
         public ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations => _availableLocalizations.AsReadOnly();
-       
-          
+
+
         /// <summary>
         /// Contains the localizations from the current localization file.
         /// </summary>
@@ -33,8 +34,7 @@ namespace LazyApiPack.Localization.Manager
         public LocalizationService() { }
 
         /// <inheritdoc/>
-        public void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null)
-        {
+        public void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null) {
             //_availableLocalizations.Clear();
             //_currentLocalization = null;
             //_currentLocalizationDictionary = null;
@@ -47,46 +47,62 @@ namespace LazyApiPack.Localization.Manager
             var localizationFiles = folders.SelectMany(d => Directory.GetFiles(d, searchPattern, options)).ToList();
             localizationFiles.AddRange(files);
 
-            foreach (var file in localizationFiles)
-            {
-                using (var fHandle = File.OpenRead(file))
-                {
+            AddLocalizationsIntern(localizationFiles, null, (path) => File.OpenRead(path));
+
+        }
+
+        private void AddLocalizationsIntern(List<string> pathes, Assembly? sourceAssembly, Func<string, Stream>? streamLoader) {
+            if (streamLoader == null) throw new ArgumentNullException(nameof(streamLoader));
+            foreach (var path in pathes) {
+                using (var fHandle = streamLoader(path)) {
                     var localization = JsonSerializer.Deserialize<LocalizationHeader>(fHandle)
                         ?? throw new NullReferenceException("The deserialized localization file returned null.");
-                    localization.FilePath = file;
+                    localization.Path = path;
+                    localization.Assembly = sourceAssembly;
+
                     _availableLocalizations.Add(localization);
                 }
             }
         }
 
+        public void AddLocalizations([NotNull] Assembly assembly, [NotNull] string[] localizationNamespaces, string? searchPattern = null) {
+            if (localizationNamespaces == null || localizationNamespaces.Length == 0) return;
 
+            var resources = assembly.GetManifestResourceNames().Where(m => localizationNamespaces.Any(n => m.StartsWith(n)));
+
+            // If file filter was used:
+            if (!string.IsNullOrWhiteSpace(searchPattern)) {
+                // Convert pattern to regex
+                searchPattern = $".*{searchPattern.Replace(".", @"\.").Replace('?', '.').Replace("*", "(.*)")}$";
+                var rx = new Regex(searchPattern);
+                resources = resources.Where(m => rx.Match(m).Success);
+            }
+
+            AddLocalizationsIntern(resources.ToList(), assembly, (path) => assembly.GetManifestResourceStream(path));
+
+        }
 
         protected ILocalizationHeader? _currentLocalization;
         /// <inheritdoc />
-        public ILocalizationHeader? CurrentLocalization
-        {
-            get
-            {
+        public ILocalizationHeader? CurrentLocalization {
+            get {
                 return _currentLocalization;
             }
-            set
-            {
+            set {
                 LoadLocalization((LocalizationHeader?)value);
             }
         }
 
 
-        protected void LoadLocalization(LocalizationHeader? header)
-        {
+        protected void LoadLocalization(LocalizationHeader? header) {
             var old = _currentLocalization;
 
-            
-            if (header != null)
-            {
+
+            if (header != null) {
                 var mergedHeaders = _availableLocalizations.Where(
-                        l => l.LanguageCodeIetf == header.LanguageCodeIetf || 
-                        ( 
-                            header.LanguageCodeIetf == null && 
+                        l => l.LanguageCodeIetf == header.LanguageCodeIetf ||
+                        (
+                            header.LanguageCodeIetf == null &&
                             l.LanguageCodeIetf == null &&
                             l.LanguageCodeIso639_1 == header.LanguageCodeIso639_1
                         ));
@@ -98,38 +114,41 @@ namespace LazyApiPack.Localization.Manager
                 foreach (var file in mergedHeaders
                     .OfType<LocalizationHeader>()
                     .OrderByDescending(o => o.Priority)
-                    .Select(o => o.FilePath))
-                {
-                    if (!File.Exists(file))
-                    {
-                        throw new FileNotFoundException($"File {file} does not exist anymore.");
+                    .Select(o => new { Path = o.Path, Assembly = o.Assembly })) {
+                    
+                    
+                    if (file.Assembly == null && !File.Exists(file.Path)) {
+                        throw new FileNotFoundException($"File {file.Path} does not exist anymore.");
+                    }
+                    LocalizationFile? source = null;
+
+                    if (file.Assembly == null) {
+                       source = JsonSerializer.Deserialize<LocalizationFile>(File.ReadAllText(file.Path))
+                            ?? throw new NullReferenceException("The deserialized localization file returned null.");
+
+                    } else {
+                        source = JsonSerializer.Deserialize<LocalizationFile>(file.Assembly.GetManifestResourceStream(file.Path) ??
+                            throw new InvalidOperationException($"Resource {file.Path} returned an empty stream."));
                     }
 
-                    var source =  JsonSerializer.Deserialize<LocalizationFile>(File.ReadAllText(file))
-                        ?? throw new NullReferenceException("The deserialized localization file returned null.");
-
+                    if (source == null) throw new InvalidOperationException($"Resource {file.Path} returned an empty resource.");
                     target.DefaultLanguageName = source.DefaultLanguageName;
                     target.LocalizedLanguageName = source.LocalizedLanguageName;
                     target.IsRightToLeft = source.IsRightToLeft;
                     target.LanguageCodeIso639_1 = source.LanguageCodeIso639_1;
-                    foreach (var group in source.Translations)
-                    {
-                        if (!target.Translations.ContainsKey(group.Key))
-                        {
+                    foreach (var group in source.Translations) {
+                        if (!target.Translations.ContainsKey(group.Key)) {
                             target.Translations.Upsert(group.Key, group.Value);
                         }
 
-                        foreach (var id in group.Value)
-                        {
+                        foreach (var id in group.Value) {
                             target.Translations[group.Key].Upsert(id.Key, id.Value);
                         }
                     }
 
                 }
                 _currentLocalizationDictionary = target;
-            }
-            else
-            {
+            } else {
                 _currentLocalizationDictionary = null;
             }
 
@@ -139,13 +158,11 @@ namespace LazyApiPack.Localization.Manager
         }
 
         /// <inheritdoc/>
-        public string? GetTranslation(string group, string id)
-        {
+        public string? GetTranslation(string group, string id) {
             return _currentLocalizationDictionary?.GetTranslation(group, id);
         }
         /// <inheritdoc/>
-        public bool SetTranslation(string group, string id, string? value)
-        {
+        public bool SetTranslation(string group, string id, string? value) {
             return _currentLocalizationDictionary?.SetTranslation(group, id, value) ?? false;
         }
 

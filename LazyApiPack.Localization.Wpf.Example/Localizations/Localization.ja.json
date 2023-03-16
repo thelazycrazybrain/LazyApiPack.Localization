@@ -1,0 +1,17 @@
+﻿{
+	"LocalizedLanguageName": "日本語 (日本)",
+	"DefaultLanguageName": "Japanese (Japan)",
+	"LanguageCodeIetf": "ja",
+	"LanguageCodeIso639_1": "ja",
+	"IsRightToLeft": false,
+	"Translations": {
+		"Messages": {
+			"SayYes": "はい！",
+			"SayNo": "いいえ！"
+		},
+		"Captions": {
+			"MainTitle": "私のアプリケーション",
+			"PopupTitle": "私のポップアップ"
+		}
+	}
+}

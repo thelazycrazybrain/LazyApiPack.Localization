@@ -16,6 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Localizations\Localization.ja.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <EmbeddedResource Include="Localizations\Localization.ja.json" WithCulture="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LazyApiPack.Localization.Wpf" Version="0.0.1" />
   </ItemGroup>
 
@@ -35,5 +43,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>
