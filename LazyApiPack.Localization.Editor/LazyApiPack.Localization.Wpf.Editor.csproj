@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
+		<OutputType>Library</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
@@ -13,6 +13,20 @@
 		<Version>$(AssemblyVersion)</Version>
 		
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Localizations\Localization.de.json" />
+	  <None Remove="Localizations\Localization.en.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Localizations\Localization.de.json" WithCulture="false" />
+	  <EmbeddedResource Include="Localizations\Localization.en.json" WithCulture="false" />
+	</ItemGroup>
+
+	<!--TODO: Replace Project Reference with updated nuget package!!-->
+	<ItemGroup>
+	  <ProjectReference Include="..\LazyApiPack.Localization.Wpf\LazyApiPack.Localization.Wpf.csproj" />
+	  <ProjectReference Include="..\LazyApiPack.Localization\LazyApiPack.Localization.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="ReadMe.md">

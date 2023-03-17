@@ -9,9 +9,19 @@
 
         
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Wpf Localization test" Height="450" Width="800">
     <Grid>
-        <Button Content="{loc:Localizer Captions.MainTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="250" Height="30" Click="Button_Click" Margin="0,217,0,0" HorizontalContentAlignment="{loc:HorizontalAlignmentLocalizer}" />
-       
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Margin="10">Click to change language:</TextBlock>
+        <Button Margin="10" Grid.Row="1" Content="{loc:Localizer Captions.MainTitle}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="250" Height="30" Click="Button_Click" HorizontalContentAlignment="{loc:HorizontalAlignmentLocalizer}" />
+        <Button Grid.Column="2" Click="Button_Click_1" >Open Language Editor</Button>
     </Grid>
 </Window>

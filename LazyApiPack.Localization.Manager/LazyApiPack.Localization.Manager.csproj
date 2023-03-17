@@ -16,13 +16,17 @@
 		<PackageReadmeFile>ReadMe.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization.git</RepositoryUrl>
 		<PackageTags>localization</PackageTags>
-		<PackageReleaseNotes>Added support for embedded localization resources.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added support to edit localization files. Bugfix: Adding resources while a localization is already selected was not reloading the localizations.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="LazyApiPack.Collections" Version="0.0.4" />
-	  <PackageReference Include="LazyApiPack.Localization" Version="0.0.6" />
+	</ItemGroup>
+
+	<!--TODO: Replace Project Reference with updated nuget package!!-->
+	<ItemGroup>
+	  <ProjectReference Include="..\LazyApiPack.Localization\LazyApiPack.Localization.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="ReadMe.md" Pack="True" PackagePath="\" />

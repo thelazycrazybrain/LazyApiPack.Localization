@@ -35,9 +35,6 @@ namespace LazyApiPack.Localization.Manager {
 
         /// <inheritdoc/>
         public void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null) {
-            //_availableLocalizations.Clear();
-            //_currentLocalization = null;
-            //_currentLocalizationDictionary = null;
             searchPattern = searchPattern ?? string.Empty;
             options = options ?? new EnumerationOptions();
             var folders = localizationDirectories.Where(d => Directory.Exists(d));
@@ -49,20 +46,6 @@ namespace LazyApiPack.Localization.Manager {
 
             AddLocalizationsIntern(localizationFiles, null, (path) => File.OpenRead(path));
 
-        }
-
-        private void AddLocalizationsIntern(List<string> pathes, Assembly? sourceAssembly, Func<string, Stream>? streamLoader) {
-            if (streamLoader == null) throw new ArgumentNullException(nameof(streamLoader));
-            foreach (var path in pathes) {
-                using (var fHandle = streamLoader(path)) {
-                    var localization = JsonSerializer.Deserialize<LocalizationHeader>(fHandle)
-                        ?? throw new NullReferenceException("The deserialized localization file returned null.");
-                    localization.Path = path;
-                    localization.Assembly = sourceAssembly;
-
-                    _availableLocalizations.Add(localization);
-                }
-            }
         }
 
         public void AddLocalizations([NotNull] Assembly assembly, [NotNull] string[] localizationNamespaces, string? searchPattern = null) {
@@ -81,6 +64,44 @@ namespace LazyApiPack.Localization.Manager {
             AddLocalizationsIntern(resources.ToList(), assembly, (path) => assembly.GetManifestResourceStream(path));
 
         }
+        /// <summary>
+        /// Adds localizations independent from the source
+        /// </summary>
+        /// <param name="pathes">The path for the streamLoader</param>
+        /// <param name="sourceAssembly">If the resource is from an assembly, specify the assembly here.</param>
+        /// <param name="streamLoader">Function that resolves the path and returns a stream containing the localization json file.</param>
+        /// <exception cref="NullReferenceException">If the JsonSerializer returns no object for the specified file.</exception>
+        /// <exception cref="ArgumentNullException">If the streamLoader function was not specified.</exception>
+        private void AddLocalizationsIntern(List<string> pathes, Assembly? sourceAssembly, Func<string, Stream>? streamLoader)
+        {
+            if (streamLoader == null) throw new ArgumentNullException(nameof(streamLoader));
+            foreach (var path in pathes)
+            {
+                using (var fHandle = streamLoader(path))
+                {
+                    var localization = JsonSerializer.Deserialize<LocalizationHeader>(fHandle)
+                        ?? throw new NullReferenceException("The deserialized localization file returned null.");
+                    localization.Path = path;
+                    localization.Assembly = sourceAssembly;
+
+                    _availableLocalizations.Add(localization);
+                }
+            }
+            ReloadLocalization();
+        }
+
+        /// <summary>
+        /// Reloads the localization in case the dictionaries have changed or a service has added additional resources.
+        /// </summary>
+        private void ReloadLocalization()
+        {
+            if (CurrentLocalization != null)
+            {
+                var temp = CurrentLocalization;
+                CurrentLocalization = null;
+                CurrentLocalization = temp;
+            }
+        }
 
         protected ILocalizationHeader? _currentLocalization;
         /// <inheritdoc />
@@ -89,6 +110,7 @@ namespace LazyApiPack.Localization.Manager {
                 return _currentLocalization;
             }
             set {
+                if (value == _currentLocalization) return;
                 LoadLocalization((LocalizationHeader?)value);
             }
         }
@@ -102,8 +124,8 @@ namespace LazyApiPack.Localization.Manager {
                 var mergedHeaders = _availableLocalizations.Where(
                         l => l.LanguageCodeIetf == header.LanguageCodeIetf ||
                         (
-                            header.LanguageCodeIetf == null &&
-                            l.LanguageCodeIetf == null &&
+                            //header.LanguageCodeIetf == null &&
+                            //l.LanguageCodeIetf == null &&
                             l.LanguageCodeIso639_1 == header.LanguageCodeIso639_1
                         ));
 

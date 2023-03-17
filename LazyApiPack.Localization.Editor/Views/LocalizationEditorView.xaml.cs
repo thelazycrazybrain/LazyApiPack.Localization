@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LazyApiPack.Localization.Editor
+namespace LazyApiPack.Localization.Wpf.Editor.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LocalizationEditorView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LocalizationEditorView : UserControl
     {
-        public MainWindow()
+        public LocalizationEditorView()
         {
             InitializeComponent();
         }
