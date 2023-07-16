@@ -1,0 +1,19 @@
+{
+  "ModuleId": "TimeRecordingModule",
+  "LanguageCode": "de",
+  "IsDefault": true,
+  "Priority": 0,
+  "DefaultLanguageName": "German",
+  "LocalizedLanguageName": "Deutsch",
+  "IsRightToLeft": false,
+  "Translations": {
+    "CaptionsTim": {
+      "SaveFileDialogCaption": "Zeiterfassungsdatei speichern",
+      "OpenFileDialogCaption": "Zeiterfassungsdatei \u00F6ffnen"
+    },
+    "MessagesTim": {
+      "SaveFileDialogMessage": "Wollen Sie die Zeiterfassungsdatei speichern?",
+      "OpenFileDialogMessage": "M\u00F6chten Sie die Zeiterfassungsdatei \u00F6ffnen?"
+    }
+  }
+}

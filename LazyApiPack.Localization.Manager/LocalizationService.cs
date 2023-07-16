@@ -1,171 +1,244 @@
 ﻿using LazyApiPack.Localization.Json;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Formats.Asn1;
-using System.Security.Cryptography;
 using System.Text.Json;
 using LazyApiPack.Collections.Extensions;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
+using System.Linq;
+using System.IO;
+using System.Threading.Tasks.Sources;
+using System.Text.Json.Serialization;
 
-namespace LazyApiPack.Localization.Manager {
-
-    /// <inheritdoc/>
-    public class LocalizationService : ILocalizationService {
+namespace LazyApiPack.Localization.Manager
+{
+    public class LocalizationService : ILocalizationService
+    {
         /// <inheritdoc/>
         public event LocalizationChangedEventHandler? LocalizationChanged;
+
         /// <summary>
-        /// Contains meta-information about all found localization files.
+        /// Contains the current translations for the selected localization (Module, Group, Id, (Value, Priority)
         /// </summary>
-        private readonly List<ILocalizationHeader> _availableLocalizations
-            = new List<ILocalizationHeader>();
+        private Dictionary<string, Dictionary<string, Dictionary<string, LocalizationEntry>>> _currentDictionary = new();
+
+        /// <summary>
+        /// Contains the loaded headers with their respective module name.
+        /// </summary>
+        private Dictionary<string, List<ILocalizationHeader>> _modules = new Dictionary<string, List<ILocalizationHeader>>();
+
+        ILocalizationHeader? _currentLocalization;
         /// <inheritdoc/>
-        public ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations => _availableLocalizations.AsReadOnly();
+        public ILocalizationHeader? CurrentLocalization
+        {
+            get => _currentLocalization;
+            set
+            {
+                var previous = _currentLocalization;
+                _currentLocalization = value;
+                ChangeLocalization(previous, value);
 
-
-        /// <summary>
-        /// Contains the localizations from the current localization file.
-        /// </summary>
-        private ILocalization? _currentLocalizationDictionary;
-        /// <summary>
-        /// Creates an instance of the LocalizationService
-        /// </summary>
-        public LocalizationService() { }
-
-        /// <inheritdoc/>
-        public void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null) {
-            //_availableLocalizations.Clear();
-            //_currentLocalization = null;
-            //_currentLocalizationDictionary = null;
-            searchPattern = searchPattern ?? string.Empty;
-            options = options ?? new EnumerationOptions();
-            var folders = localizationDirectories.Where(d => Directory.Exists(d));
-            var files = localizationDirectories.Where(d => File.Exists(d));
-
-
-            var localizationFiles = folders.SelectMany(d => Directory.GetFiles(d, searchPattern, options)).ToList();
-            localizationFiles.AddRange(files);
-
-            AddLocalizationsIntern(localizationFiles, null, (path) => File.OpenRead(path));
-
+            }
         }
 
-        private void AddLocalizationsIntern(List<string> pathes, Assembly? sourceAssembly, Func<string, Stream>? streamLoader) {
-            if (streamLoader == null) throw new ArgumentNullException(nameof(streamLoader));
-            foreach (var path in pathes) {
-                using (var fHandle = streamLoader(path)) {
-                    var localization = JsonSerializer.Deserialize<LocalizationHeader>(fHandle)
-                        ?? throw new NullReferenceException("The deserialized localization file returned null.");
-                    localization.Path = path;
-                    localization.Assembly = sourceAssembly;
+        /// <inheritdoc/>
+        public ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations { get; private set; } = new List<ILocalizationHeader>().AsReadOnly();
 
-                    _availableLocalizations.Add(localization);
+        /// <inheritdoc/>
+        public void AddLocalizations([DisallowNull] IEnumerable<string> localizationFiles)
+        {
+            var localizationHeaders = LoadHeadersFromFile(localizationFiles);
+            var modules = localizationHeaders.GroupBy(g => g.ModuleId);
+            foreach (var module in modules)
+            {
+                if (!_modules.ContainsKey(module.Key))
+                {
+                    _modules.Add(module.Key, new List<ILocalizationHeader>());
+                }
+
+                foreach (var language in module)
+                {
+                    if (!_modules[module.Key].Any(l => l.LanguageCode == language.LanguageCode))
+                    {
+                        _modules[module.Key].Add(language);
+                    }
+                    else if (_modules[module.Key].Any(l => l.LanguageCode == language.LanguageCode && l.Priority < language.Priority))
+                    {
+                        _modules[module.Key].Add(language);
+                    }
                 }
             }
+            UpdateAvailableLocalizations();
+            ChangeLocalization(CurrentLocalization, CurrentLocalization);
         }
 
-        public void AddLocalizations([NotNull] Assembly assembly, [NotNull] string[] localizationNamespaces, string? searchPattern = null) {
-            if (localizationNamespaces == null || localizationNamespaces.Length == 0) return;
-
-            var resources = assembly.GetManifestResourceNames().Where(m => localizationNamespaces.Any(n => m.StartsWith(n)));
-
-            // If file filter was used:
-            if (!string.IsNullOrWhiteSpace(searchPattern)) {
-                // Convert pattern to regex
-                searchPattern = $".*{searchPattern.Replace(".", @"\.").Replace('?', '.').Replace("*", "(.*)")}$";
-                var rx = new Regex(searchPattern);
-                resources = resources.Where(m => rx.Match(m).Success);
-            }
-
-            AddLocalizationsIntern(resources.ToList(), assembly, (path) => assembly.GetManifestResourceStream(path));
-
+        /// <inheritdoc/>
+        public void AddLocalizations([DisallowNull] string localizationFile)
+        {
+            AddLocalizations(new[] { localizationFile });
         }
 
-        protected ILocalizationHeader? _currentLocalization;
-        /// <inheritdoc />
-        public ILocalizationHeader? CurrentLocalization {
-            get {
-                return _currentLocalization;
+        /// <inheritdoc/>
+        public void RemoveModule(string moduleId)
+        {
+            if (_modules.ContainsKey(moduleId))
+            {
+                _modules.Remove(moduleId);
             }
-            set {
-                LoadLocalization((LocalizationHeader?)value);
-            }
+            UpdateAvailableLocalizations();
+            ChangeLocalization(CurrentLocalization, CurrentLocalization);
         }
 
-
-        protected void LoadLocalization(LocalizationHeader? header) {
-            var old = _currentLocalization;
-
-
-            if (header != null) {
-                var mergedHeaders = _availableLocalizations.Where(
-                        l => l.LanguageCodeIetf == header.LanguageCodeIetf ||
-                        (
-                            header.LanguageCodeIetf == null &&
-                            l.LanguageCodeIetf == null &&
-                            l.LanguageCodeIso639_1 == header.LanguageCodeIso639_1
-                        ));
-
-                List<LocalizationFile> mergedDictionaries = new();
-
-                var target = new LocalizationFile();
-
-                foreach (var file in mergedHeaders
-                    .OfType<LocalizationHeader>()
-                    .OrderByDescending(o => o.Priority)
-                    .Select(o => new { Path = o.Path, Assembly = o.Assembly })) {
-                    
-                    
-                    if (file.Assembly == null && !File.Exists(file.Path)) {
-                        throw new FileNotFoundException($"File {file.Path} does not exist anymore.");
-                    }
-                    LocalizationFile? source = null;
-
-                    if (file.Assembly == null) {
-                       source = JsonSerializer.Deserialize<LocalizationFile>(File.ReadAllText(file.Path))
-                            ?? throw new NullReferenceException("The deserialized localization file returned null.");
-
-                    } else {
-                        source = JsonSerializer.Deserialize<LocalizationFile>(file.Assembly.GetManifestResourceStream(file.Path) ??
-                            throw new InvalidOperationException($"Resource {file.Path} returned an empty stream."));
-                    }
-
-                    if (source == null) throw new InvalidOperationException($"Resource {file.Path} returned an empty resource.");
-                    target.DefaultLanguageName = source.DefaultLanguageName;
-                    target.LocalizedLanguageName = source.LocalizedLanguageName;
-                    target.IsRightToLeft = source.IsRightToLeft;
-                    target.LanguageCodeIso639_1 = source.LanguageCodeIso639_1;
-                    foreach (var group in source.Translations) {
-                        if (!target.Translations.ContainsKey(group.Key)) {
-                            target.Translations.Upsert(group.Key, group.Value);
-                        }
-
-                        foreach (var id in group.Value) {
-                            target.Translations[group.Key].Upsert(id.Key, id.Value);
-                        }
-                    }
-
+        /// <inheritdoc/>
+        public string? GetTranslation(string group, string id)
+        {
+            if (_currentDictionary.Any(d => d.Value.ContainsKey(group)))
+            {
+                var selectedGroup = _currentDictionary.First(d => d.Value.ContainsKey(group)).Value[group];
+                if (selectedGroup.ContainsKey(id))
+                {
+                    return selectedGroup[id].Value;
                 }
-                _currentLocalizationDictionary = target;
-            } else {
-                _currentLocalizationDictionary = null;
             }
 
 
-            _currentLocalization = header;
-            LocalizationChanged?.Invoke(this, new LocalizationChangedEventArgs(old, header));
+            return null;
         }
 
-        /// <inheritdoc/>
-        public string? GetTranslation(string group, string id) {
-            return _currentLocalizationDictionary?.GetTranslation(group, id);
-        }
-        /// <inheritdoc/>
-        public bool SetTranslation(string group, string id, string? value) {
-            return _currentLocalizationDictionary?.SetTranslation(group, id, value) ?? false;
+        /// <summary>
+        /// Updates the list of available localizations
+        /// </summary>
+        private void UpdateAvailableLocalizations()
+        {
+            var languageHeaders = _modules.SelectMany(l => l.Value).Distinct(new LocalizationHeaderComparer());
+            AvailableLocalizations = languageHeaders.ToList().AsReadOnly();
         }
 
+        /// <summary>
+        /// Loads the headers from the localization files.
+        /// </summary>
+        /// <param name="localizationFiles">List of localization files</param>
+        /// <returns>List of the localization headers without translations.</returns>
+        private IEnumerable<LocalizationHeader> LoadHeadersFromFile(IEnumerable<string> localizationFiles)
+        {
+            foreach (var file in localizationFiles)
+            {
+                var header = JsonSerializer.Deserialize<LocalizationHeader>(File.ReadAllText(file)) ?? throw new NullReferenceException($"Deserialization of the file '{file}' resulted in NULL.");
+                header.File = file;
+                yield return header;
+            }
+        }
 
+        /// <summary>
+        /// Selects the headers for the specific language
+        /// </summary>
+        /// <param name="languageCode">Language code that is also represented in the AvailableLocalizations.</param>
+        /// <returns>A List of localization headers for the selected localization or their respective default localization.</returns>
+        private IEnumerable<ILocalizationHeader> GetHeaders(string languageCode)
+        {
+            foreach (var module in _modules)
+            {
+                if (module.Value.Any(v => v.LanguageCode == languageCode))
+                {
+                    foreach (var content in module.Value.Where(l => l.LanguageCode == languageCode))
+                    {
+                        yield return content;
+                    }
+                }
+                else if (module.Value.Any(v => v.IsDefault))
+                {
+                    foreach (var content in module.Value.Where(l => l.IsDefault))
+                    {
+                        yield return content;
+                    }
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Updates the current localization
+        /// </summary>
+        /// <param name="oldLocalization">Header of the old localization.</param>
+        /// <param name="newLocalization">Header of the new localization.</param>
+        private void ChangeLocalization(ILocalizationHeader? oldLocalization, ILocalizationHeader? newLocalization)
+        {
+            if (newLocalization == null || !AvailableLocalizations.Any(h => h.LanguageCode == newLocalization.LanguageCode))
+            {
+                return; // Language not set or is not available anymore.
+            }
+
+            _currentDictionary.Clear();
+            foreach (var header in GetHeaders(newLocalization.LanguageCode))
+            {
+                if (!_currentDictionary.ContainsKey(header.ModuleId))
+                {
+                    _currentDictionary.Add(header.ModuleId, new());
+                }
+
+                var dictionary = JsonSerializer.Deserialize<LocalizationFile>(File.ReadAllText(((LocalizationHeader)header).File));
+                foreach (var group in dictionary.Translations)
+                {
+                    if (!_currentDictionary[header.ModuleId].ContainsKey(group.Key))
+                    {
+                        _currentDictionary[header.ModuleId].Add(group.Key, new());
+                    }
+                    foreach (var id in group.Value)
+                    {
+                        if (!_currentDictionary[header.ModuleId][group.Key].ContainsKey(id.Key))
+                        {
+                            _currentDictionary[header.ModuleId][group.Key].Add(id.Key, new LocalizationEntry(id.Value, dictionary.Priority));
+                        }
+                        else if (_currentDictionary[header.ModuleId][group.Key][id.Key].Priority < dictionary.Priority)
+                        {
+                            _currentDictionary[header.ModuleId][group.Key][id.Key] = new LocalizationEntry(id.Value, dictionary.Priority);
+                        }
+
+                    }
+                }
+            }
+
+            OnLocalizationChanged(oldLocalization, newLocalization);
+
+        }
+
+        /// <summary>
+        /// Raises the LocalizationChanged event if the event is used.
+        /// </summary>
+        /// <param name="oldLocalization">Header of the old localization.</param>
+        /// <param name="newLocalization">Header of the new localization.</param>
+        protected virtual void OnLocalizationChanged(ILocalizationHeader? oldLocalization, ILocalizationHeader? newLocalization)
+        {
+            LocalizationChanged?.Invoke(this, new LocalizationChangedEventArgs(oldLocalization, newLocalization));
+        }
+    }
+
+    /// <summary>
+    /// Compares localizations by language code
+    /// </summary>
+    internal class LocalizationHeaderComparer : IEqualityComparer<ILocalizationHeader>
+    {
+        public bool Equals(ILocalizationHeader? x, ILocalizationHeader? y)
+        {
+            return x?.LanguageCode == y?.LanguageCode;
+        }
+
+        public int GetHashCode([DisallowNull] ILocalizationHeader obj)
+        {
+            return obj.LanguageCode.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// Represents the localization with the content and the priority
+    /// </summary>
+    internal struct LocalizationEntry
+    {
+        public LocalizationEntry(string? value, int priority)
+        {
+            Value = value;
+            Priority = priority;
+        }
+
+        public string? Value { get; internal set; }
+        public int Priority { get; internal set; }
     }
 }

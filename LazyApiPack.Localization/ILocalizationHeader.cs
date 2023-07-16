@@ -1,4 +1,5 @@
-﻿using System.Transactions;
+﻿using System;
+using System.Transactions;
 
 namespace LazyApiPack.Localization
 {
@@ -7,6 +8,14 @@ namespace LazyApiPack.Localization
     /// </summary>
     public interface ILocalizationHeader
     {
+        /// <summary>
+        /// If the selected language is not supported by the module, this language file is used instead.
+        /// </summary>
+        bool IsDefault { get; set; }
+        /// <summary>
+        /// Specifies the module id.
+        /// </summary>
+        string ModuleId { get; set; }
         /// <summary>
         /// Used for localization merging. If the value is higher than other files, the other files override values from this file.
         /// </summary>
@@ -20,16 +29,13 @@ namespace LazyApiPack.Localization
         /// </summary>
         string DefaultLanguageName { get; set; }
         /// <summary>
-        /// Four letter language code (e.g. de-DE, en-US)
+        /// Language code (e.g. de-DE, en-US, no)
         /// </summary>
-        string LanguageCodeIetf { get; set; }
-        /// <summary>
-        /// Two letter language code (e.g. de, en)
-        /// </summary>
-        string LanguageCodeIso639_1 { get; set; }
+        string LanguageCode { get; set; }
         /// <summary>
         /// Indicates, that the language is written right-to-left (e.g. Hebrew or Arabic)
         /// </summary>
         bool IsRightToLeft { get; set; }
+
     }
 }

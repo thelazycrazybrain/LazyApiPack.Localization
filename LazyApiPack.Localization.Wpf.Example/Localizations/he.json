@@ -1,8 +1,10 @@
 ﻿{
-	"LocalizedLanguageName": "עִברִית",
+	"ModuleId": "LazyApiPack.Localization.Wpf.Example",
+	"LanguageCode": "he",
+	"IsDefault": false,
+	"Priority": 0,
 	"DefaultLanguageName": "Hebrew",
-	"LanguageCodeIetf": "he",
-	"LanguageCodeIso639_1": "he",
+	"LocalizedLanguageName": "עִברִית",
 	"IsRightToLeft": true,
 	"Translations": {
 		"Messages": {

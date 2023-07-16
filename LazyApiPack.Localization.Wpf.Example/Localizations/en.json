@@ -1,9 +1,10 @@
 ﻿{
+  "ModuleId": "LazyApiPack.Localization.Wpf.Example",
+  "LanguageCode": "en",
+  "IsDefault": false,
   "Priority": 0,
-  "LocalizedLanguageName": "English (United Kingdom)",
-  "DefaultLanguageName": "English (United Kingdom)",
-  "LanguageCodeIetf": "en-UK",
-  "LanguageCodeIso639_1": "en",
+  "DefaultLanguageName": "English",
+  "LocalizedLanguageName": "English",
   "IsRightToLeft": false,
   "Translations": {
     "Messages": {

@@ -16,20 +16,25 @@ after the instantiation, you need to initialize the service (AddLocalizations).
 
 ### Function AddLocalizations (Files)
 This method is used to initialize the localization resources.
+To add localizations, use the "AddLocalizations" function and pass it a list of file pathes to the localization files.
+To use a localization, set the "CurrentLocalization" property to a localization found in AvailableLocalizations eg.
+`_localizationService.CurrentLocalization = _localizationService.AvailableLocalizations.First(l => l.LanguageCode == "en");`
 
-**localizationDirectories**:
-A list of directories and files that contain your translation files.
+## Use localization
+To use a localized value, use `_localizationService.GetLocalization("Group", "Id")`
+If you need information about the localization attributes like "IsRightToLeft", use the `CurrentLocalization.IsRightToLeft` attribute.
 
-**searchPattern**: If you pass directories with `localizationDirectories`, you can pass a file filter (e.g. `*.json`)
+## Remove localization
+If you unload a module, you should remove the localizations with the module name
+`_localizationManager.RemoveLocalization("MyModule");`
+Note, that this also removes overridden translations with the same module name.
+Important: Make sure, that the currently selected language is still in one of the dictionaries. If not, all localizations revert to the default localization files.
+```csharp
+if (!_localizationService.AvailableLocalizations.Any(l => _localizationService.CurrentLocalization?.LanguageCode == l.LanguageCode)`) 
+{
+	_localizationService.CurrentLocalization = 
+		_localizationService.AvailableLocalizations.FirstOrDefault(l => l.LanguageCode == "en") ?? 
+			_localizationService.AvailableLocalizations.FirstOrDefault();
 
-**options**: You can specify, how to deal with directories (e.g. find files in subdirectories etc.)
-
-### Function AddLocalizations (Embedded resources)
-To load localization files from an embedded resource, use the overloaded function.
-
-**Assembly^^: Specifies the assembly where the resources are located
-
-**localizationNamespaces**: Specifies the namespace (and subnamespaces) where the resources are located.
-
-**searchPattern**: If specified, only the files that match the searchPattern (e.g. Localization.*.json) are loaded.
-
+}
+```

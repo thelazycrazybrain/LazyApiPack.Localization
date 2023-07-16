@@ -1,9 +1,10 @@
 ﻿{
-	"Priority": 99999,
-	"LocalizedLanguageName": "Deutsch (Deutschland)",
-	"DefaultLanguageName": "German (Germany)",
-	"LanguageCodeIetf": "de-DE",
-	"LanguageCodeIso639_1": "de",
+	"ModuleId": "LazyApiPack.Localization.Wpf.Example",
+	"LanguageCode": "de",
+	"IsDefault": false,
+	"Priority": 0,
+	"DefaultLanguageName": "German",
+	"LocalizedLanguageName": "Deutsch",
 	"IsRightToLeft": false,
 	"Translations": {
 		"Messages": {
