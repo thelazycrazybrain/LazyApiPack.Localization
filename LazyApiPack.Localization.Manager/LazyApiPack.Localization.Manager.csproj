@@ -1,34 +1,30 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<Title>The Lazy Crazy Brain Api Pack - Localization Manager</Title>
-		<Description>Provides a way to localize applications.</Description>
-		<Authors>Jodie Watson</Authors>
-		<Copyright>Copyright (c) 2022-2023 Jodie Watson</Copyright>
-		<PackageOutputPath>C:\LocalNugets\LazyApiPack\$(OutputPath)</PackageOutputPath>
-		<AssemblyVersion>0.0.5</AssemblyVersion>
-		<FileVersion>0.0.5</FileVersion>
-		<Version>$(AssemblyVersion)</Version>
-		<PackageProjectUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization</PackageProjectUrl>
-		<PackageReadmeFile>ReadMe.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization.git</RepositoryUrl>
-		<PackageTags>localization</PackageTags>
-		<PackageReleaseNotes>Added support to edit localization files. Bugfix: Adding resources while a localization is already selected was not reloading the localizations.</PackageReleaseNotes>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="LazyApiPack.Collections" Version="0.0.4" />
-	</ItemGroup>
-
-	<!--TODO: Replace Project Reference with updated nuget package!!-->
-	<ItemGroup>
-	  <ProjectReference Include="..\LazyApiPack.Localization\LazyApiPack.Localization.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="ReadMe.md" Pack="True" PackagePath="\" />
-	</ItemGroup>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>The Lazy Crazy Brain Api Pack - Localization Manager</Title>
+    <Description>Provides a way to localize applications.</Description>
+    <Authors>Jodie Watson</Authors>
+    <Copyright>Copyright (c) 2022-2023 Jodie Watson</Copyright>
+    <PackageOutputPath>C:\LocalNugets\LazyApiPack\$(OutputPath)</PackageOutputPath>
+    <AssemblyVersion>0.1</AssemblyVersion>
+    <FileVersion>0.1</FileVersion>
+    <Version>$(AssemblyVersion)</Version>
+    <PackageProjectUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization</PackageProjectUrl>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/thelazycrazybrain/LazyApiPack.Localization.git</RepositoryUrl>
+    <PackageTags>localization</PackageTags>
+    <PackageReleaseNotes>Implemented with updated interface; Supports localization defaults (fallback), localization merges and localization override.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="LazyApiPack.Collections" Version="0.0.4" />
+    <PackageReference Include="LazyApiPack.Localization" Version="0.1.0" />
+  </ItemGroup>
+  <!-- TODO: Replace Project Reference with updated nuget package!! -->
+  <ItemGroup>
+    <None Update="ReadMe.md" Pack="True" PackagePath="\" />
+  </ItemGroup>
 </Project>

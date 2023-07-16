@@ -4,10 +4,11 @@ using System.Reflection;
 
 namespace LazyApiPack.Localization
 {
+  
     /// <summary>
     /// Provides a service for localization.
     /// </summary>
-    public interface ILocalizationService : ILocalization
+    public interface ILocalizationService
     {
         /// <summary>
         /// Fires when the localization has changed.
@@ -15,20 +16,22 @@ namespace LazyApiPack.Localization
         event LocalizationChangedEventHandler LocalizationChanged;
 
         /// <summary>
-        /// Call this function after instantiation to initialize the service.
+        /// Adds a list of localization files to the service.
         /// </summary>
-        /// <param name="localizationDirectories">Files and / or directories that contain localization files.</param>
-        /// <param name="searchPattern">If you work with directories, this filter can be used to select specific localization files (e.g. *.json)</param>
-        /// <param name="options">If you work with directories, you can specify the search options (e.g. include subdirectories etc.)</param>
-        void AddLocalizations([NotNull] string[] localizationDirectories, string? searchPattern = null, EnumerationOptions? options = null);
+        /// <param name="localizationFiles">List of language files.</param>
+        void AddLocalizations([DisallowNull] IEnumerable<string> localizationFiles);
 
         /// <summary>
-        /// Adds localization files from an assembly.
+        /// Adds a localization file to the service.
         /// </summary>
-        /// <param name="assembly">Assembly that contains the localization resources.</param>
-        /// <param name="localizationNamespaces">Namespaces that include localization resources.</param>
-        /// <param name="searchPattern">Search pattern that finds resources in the assembly.</param>
-        void AddLocalizations([NotNull] Assembly assembly, [NotNull] string[] localizationNamespaces, string? searchPattern = null);
+        /// <param name="localizationFiles">The language file.</param>
+        void AddLocalizations([DisallowNull] string localizationFile);
+
+        /// <summary>
+        /// Removes the localizations from a specific module.
+        /// </summary>
+        /// <param name="moduleId">Unique id of the module that needs to be removed.</param>
+        void RemoveModule(string moduleId);
         /// <summary>
         /// Gets or sets the current language.
         /// </summary>
@@ -38,5 +41,14 @@ namespace LazyApiPack.Localization
         /// </summary>
         ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations { get; }
 
+        /// <summary>
+        /// Gets the translated text for the group and id
+        /// </summary>
+        /// <param name="group">E.g. "Captions"</param>
+        /// <param name="id">E.g. "WelcomeMessageCaption"</param>
+        /// <returns>The translated text or null.</returns>
+        string? GetTranslation(string group, string id);
+
     }
+    
 }
