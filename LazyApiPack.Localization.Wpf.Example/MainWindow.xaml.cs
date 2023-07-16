@@ -16,42 +16,52 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Policy;
+using Microsoft.Win32;
+using System.IO;
 
-namespace LazyApiPack.Localization.Wpf.Example {
+namespace LazyApiPack.Localization.Wpf.Example
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
-        public static ILocalizationService Service = new LocalizationService();
-        public MainWindow() {
+    public partial class MainWindow : Window
+    {
+        public readonly ILocalizationService Service = new LocalizationService();
+        public MainWindow()
+        {
             DataContext = this;
             // Bootstrap
-
-            LocalizerMarkupExtension.Initialize(Service);
             var root = IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var lPath = IO.Path.Combine(root, "Localizations");
+            Service.AddLocalizations(Directory.GetFiles(lPath, "*.json"));
+
+            LocalizerMarkupExtension.Initialize(Service);
 
 
-            Service.AddLocalizations(new[] { lPath }, "*.json");
-            Service.AddLocalizations(Assembly.GetExecutingAssembly(), new[] { "LazyApiPack.Localization.Wpf.Example.Localizations" }, "Localization.*.json");
+
             NextLocalization();
-            Service.CurrentLocalization = Service.AvailableLocalizations.First(l => l.LanguageCodeIetf == "de-DE");
+            Service.CurrentLocalization = Service.AvailableLocalizations.First(l => l.LanguageCode == "de");
 
 
             InitializeComponent();
         }
 
         int l = 0;
-        private void Button_Click(object sender, RoutedEventArgs e) {
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
             NextLocalization();
 
         }
-        void NextLocalization() {
-            if (l >= Service.AvailableLocalizations.Count) {
+        void NextLocalization()
+        {
+            if (l >= Service.AvailableLocalizations.Count)
+            {
                 l = 0;
             }
             Service.CurrentLocalization = Service.AvailableLocalizations[l];
             l++;
         }
+
+      
     }
 }

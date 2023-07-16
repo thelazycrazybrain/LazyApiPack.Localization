@@ -1,0 +1,19 @@
+{
+  "ModuleId": "AccountingModule",
+  "LanguageCode": "en",
+  "IsDefault": true,
+  "Priority": 0,
+  "DefaultLanguageName": "English",
+  "LocalizedLanguageName": "English",
+  "IsRightToLeft": false,
+  "Translations": {
+    "CaptionsAcc": {
+      "SaveFileDialogCaption": "Save accounting file",
+      "OpenFileDialogCaption": "Open accounting file"
+    },
+    "MessagesAcc": {
+      "SaveFileDialogMessage": "Do you want to save the accounting file?",
+      "OpenFileDialogMessage": "Do you want to open the accounting file?"
+    }
+  }
+}

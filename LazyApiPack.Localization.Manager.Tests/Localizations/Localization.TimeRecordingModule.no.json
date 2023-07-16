@@ -1,0 +1,19 @@
+{
+  "ModuleId": "TimeRecordingModule",
+  "LanguageCode": "no",
+  "IsDefault": true,
+  "Priority": 0,
+  "DefaultLanguageName": "Norwegian",
+  "LocalizedLanguageName": "Norsk Bokm\u00E5l",
+  "IsRightToLeft": false,
+  "Translations": {
+    "CaptionsTim": {
+      "SaveFileDialogCaption": "Lagre tidsstyringsfilen",
+      "OpenFileDialogCaption": "\u00C5pen tidsstyringsfilen"
+    },
+    "MessagesTim": {
+      "SaveFileDialogMessage": "Vil du lagre tidsstyringsfilen?",
+      "OpenFileDialogMessage": "Vil du \u00E5pne tidsstyringsfilen?"
+    }
+  }
+}

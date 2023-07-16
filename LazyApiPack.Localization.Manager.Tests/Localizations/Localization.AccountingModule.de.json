@@ -1,0 +1,19 @@
+{
+  "ModuleId": "AccountingModule",
+  "LanguageCode": "de",
+  "IsDefault": false,
+  "Priority": 0,
+  "DefaultLanguageName": "German",
+  "LocalizedLanguageName": "Deutsch",
+  "IsRightToLeft": false,
+  "Translations": {
+    "CaptionsAcc": {
+      "SaveFileDialogCaption": "Buchhaltungsdatei speichern",
+      "OpenFileDialogCaption": "Buchhaltungsdatei \u00F6ffnen"
+    },
+    "MessagesAcc": {
+      "SaveFileDialogMessage": "Wollen Sie die Buchhaltungsdatei speichern?",
+      "OpenFileDialogMessage": "M\u00F6chten Sie die Buchhaltungsdatei \u00F6ffnen?"
+    }
+  }
+}

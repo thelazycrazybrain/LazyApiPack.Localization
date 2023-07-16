@@ -7,28 +7,34 @@ namespace LazyApiPack.Localization.Json
     /// <inheritdoc/>
     public class LocalizationHeader : ILocalizationHeader
     {
-        /// <summary>
-        /// Assembly that contains the embedded localization resource (For internal use only!).
-        /// </summary>
-        [JsonIgnore]
-        public Assembly? Assembly { get; set; }
+        /// <inheritdoc/>
+        [JsonPropertyOrder(0)]
+        public string ModuleId { get; set; }
+        /// <inheritdoc/>
+        [JsonPropertyOrder(1)]
+        public string LanguageCode { get; set; }
+        /// <inheritdoc/>
+        [JsonPropertyOrder(2)]
+        public bool IsDefault { get; set; }
         /// <summary>
         /// Path to the localization file (For internal use only!).
         /// </summary>
         [JsonIgnore]
-        public string Path { get; set; }
+        internal string File { get; set; }
         /// <inheritdoc/>
+        [JsonPropertyOrder(3)]
         public int Priority { get; set; }
         /// <inheritdoc/>
-        public string LocalizedLanguageName { get; set; }
-        /// <inheritdoc/>
+        [JsonPropertyOrder(4)]
         public string DefaultLanguageName { get; set; }
         /// <inheritdoc/>
-        public string LanguageCodeIetf { get; set; }
+        [JsonPropertyOrder(5)]
+        public string LocalizedLanguageName { get; set; }
+
         /// <inheritdoc/>
-        public string LanguageCodeIso639_1 { get; set; }
-        /// <inheritdoc/>
+        [JsonPropertyOrder(6)]
         public bool IsRightToLeft { get; set; }
+
 
     }
 
