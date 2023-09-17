@@ -39,8 +39,9 @@ namespace LazyApiPack.Localization.Manager
             }
         }
 
+        private List<ILocalizationHeader> _availableLocalizations = new List<ILocalizationHeader>();
         /// <inheritdoc/>
-        public ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations { get; private set; } = new List<ILocalizationHeader>().AsReadOnly();
+        public IEnumerable<ILocalizationHeader> AvailableLocalizations => _availableLocalizations;
 
         /// <inheritdoc/>
         public void AddLocalizations([DisallowNull] IEnumerable<string> localizationFiles)
@@ -109,7 +110,7 @@ namespace LazyApiPack.Localization.Manager
         private void UpdateAvailableLocalizations()
         {
             var languageHeaders = _modules.SelectMany(l => l.Value).Distinct(new LocalizationHeaderComparer());
-            AvailableLocalizations = languageHeaders.ToList().AsReadOnly();
+            _availableLocalizations = languageHeaders.ToList();
         }
 
         /// <summary>

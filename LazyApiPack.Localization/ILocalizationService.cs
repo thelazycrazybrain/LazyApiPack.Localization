@@ -39,7 +39,7 @@ namespace LazyApiPack.Localization
         /// <summary>
         /// Contains meta-data of all found translation files.
         /// </summary>
-        ReadOnlyCollection<ILocalizationHeader> AvailableLocalizations { get; }
+        IEnumerable<ILocalizationHeader> AvailableLocalizations { get; }
 
         /// <summary>
         /// Gets the translated text for the group and id
