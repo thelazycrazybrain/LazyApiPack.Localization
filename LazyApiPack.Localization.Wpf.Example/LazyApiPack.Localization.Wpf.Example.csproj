@@ -14,24 +14,28 @@
     <Version>$(AssemblyVersion)</Version>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Localizations\Localization.ja.json" />
+    <None Remove="Localizations\he.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Localizations\Localization.ja.json" WithCulture="false" />
+    <EmbeddedResource Include="Localizations\he.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LazyApiPack.Localization.Manager\LazyApiPack.Localization.Manager.csproj" />
-    <ProjectReference Include="..\LazyApiPack.Localization.Wpf\LazyApiPack.Localization.Wpf.csproj" />
+    <ProjectReference Include="..\LazyApiPack.Localization.Wpf\LazyApiPack.Localization.Wpf.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Localizations\he.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Localizations\de.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Localizations\en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Localizations\Localization.ja.json" WithCulture="false">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>

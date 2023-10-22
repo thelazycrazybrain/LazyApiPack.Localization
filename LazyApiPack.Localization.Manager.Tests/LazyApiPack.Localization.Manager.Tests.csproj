@@ -7,16 +7,28 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Localizations\Localization.TimeRecordingModule.New.de.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localizations\Localization.TimeRecordingModule.New.de.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\LazyApiPack.Localization.Manager\LazyApiPack.Localization.Manager.csproj" />
   </ItemGroup>
   <ItemGroup>
+	  <None Update="Localizations\Localization.TimeRecordingModule.no.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
     <None Update="Localizations\Localization.AccountingModule.de.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -24,12 +36,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Localizations\Localization.TimeRecordingModule.de.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Localizations\Localization.TimeRecordingModule.New.de.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Localizations\Localization.TimeRecordingModule.no.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,12 +1,7 @@
 ﻿using LazyApiPack.Localization.Json;
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using LazyApiPack.Collections.Extensions;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks.Sources;
-using System.Text.Json.Serialization;
+using System.Reflection;
 
 namespace LazyApiPack.Localization.Manager
 {
@@ -44,9 +39,9 @@ namespace LazyApiPack.Localization.Manager
         public IEnumerable<ILocalizationHeader> AvailableLocalizations => _availableLocalizations;
 
         /// <inheritdoc/>
-        public void AddLocalizations([DisallowNull] IEnumerable<string> localizationFiles)
+        public void AddLocalizationsIntern([DisallowNull] IEnumerable<string> localizationFiles, bool fileIsContent)
         {
-            var localizationHeaders = LoadHeadersFromFile(localizationFiles);
+            var localizationHeaders = LoadHeadersFromFile(localizationFiles, fileIsContent);
             var modules = localizationHeaders.GroupBy(g => g.ModuleId);
             foreach (var module in modules)
             {
@@ -70,11 +65,37 @@ namespace LazyApiPack.Localization.Manager
             UpdateAvailableLocalizations();
             ChangeLocalization(CurrentLocalization, CurrentLocalization);
         }
+        public void AddLocalizations([DisallowNull] IEnumerable<string> localizationFiles)
+        {
+            AddLocalizationsIntern(localizationFiles, false);
+        }
+
 
         /// <inheritdoc/>
         public void AddLocalizations([DisallowNull] string localizationFile)
         {
-            AddLocalizations(new[] { localizationFile });
+            AddLocalizationsIntern(new[] { localizationFile }, false);
+        }
+
+
+        /// <inheritdoc/>
+        public void AddLocalizations([DisallowNull] Assembly assembly, [DisallowNull] string fullName)
+        {
+            string content = null;
+            using (var stream = assembly.GetManifestResourceStream(fullName))
+            {
+                if (stream == null) throw new NullReferenceException($"Resource {fullName} was not found in assembly {assembly.FullName}.");
+                AddLocalizationsIntern(new[] { new StreamReader(stream).ReadToEnd() }, true);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void AddLocalizations(Assembly assembly, [DisallowNull] IEnumerable<string> fullNames)
+        {
+            foreach (var item in fullNames)
+            {
+                AddLocalizations(assembly, item);
+            }
         }
 
         /// <inheritdoc/>
@@ -118,12 +139,13 @@ namespace LazyApiPack.Localization.Manager
         /// </summary>
         /// <param name="localizationFiles">List of localization files</param>
         /// <returns>List of the localization headers without translations.</returns>
-        private IEnumerable<LocalizationHeader> LoadHeadersFromFile(IEnumerable<string> localizationFiles)
+        private IEnumerable<LocalizationHeader> LoadHeadersFromFile(IEnumerable<string> localizationFiles, bool fileIsContent)
         {
             foreach (var file in localizationFiles)
             {
-                var header = JsonSerializer.Deserialize<LocalizationHeader>(File.ReadAllText(file)) ?? throw new NullReferenceException($"Deserialization of the file '{file}' resulted in NULL.");
+                var header = JsonSerializer.Deserialize<LocalizationHeader>(fileIsContent ? file : File.ReadAllText(file)) ?? throw new NullReferenceException($"Deserialization of the file '{file}' resulted in NULL.");
                 header.File = file;
+                header.FileIsContent = fileIsContent;
                 yield return header;
             }
         }
@@ -174,8 +196,9 @@ namespace LazyApiPack.Localization.Manager
                 {
                     _currentDictionary.Add(header.ModuleId, new());
                 }
-
-                var dictionary = JsonSerializer.Deserialize<LocalizationFile>(File.ReadAllText(((LocalizationHeader)header).File));
+                var lHeader = header as LocalizationHeader;
+                var dictionary = JsonSerializer.Deserialize<LocalizationFile>(
+                    lHeader.FileIsContent ? lHeader.File : File.ReadAllText(lHeader.File));
                 foreach (var group in dictionary.Translations)
                 {
                     if (!_currentDictionary[header.ModuleId].ContainsKey(group.Key))

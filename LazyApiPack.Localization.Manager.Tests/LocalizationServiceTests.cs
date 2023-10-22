@@ -1,4 +1,5 @@
 using LazyApiPack.Localization.Manager;
+//using NUnit.Framework.Internal;
 using System.Reflection;
 
 namespace LazyApiPack.Localization.Tests
@@ -47,7 +48,9 @@ namespace LazyApiPack.Localization.Tests
             Assert.IsTrue(_localizationService.GetTranslation("CaptionsTim", "SaveFileDialogCaption") == "Zeiterfassungsdatei speichern",
                 "The translation for Time Recording did not fall back to german as expected.");
 
-            _localizationService.AddLocalizations(Path.Combine(_lPath, TIM_MOD_DE_OVERRIDE));
+            // TODO: Embedded resource is not working in test framework.
+            _localizationService.AddLocalizations(new[] { Path.Combine(_lPath, TIM_MOD_DE_OVERRIDE) });
+
             _localizationService.CurrentLocalization = _localizationService.AvailableLocalizations.First(l => l.LanguageCode == "de");
             Assert.IsTrue(_localizationService.GetTranslation("CaptionsTim", "SaveFileDialogCaption") == "Zeiterfassungsdatei speichern (\u00DCberschrieben)",
                 "The translation for Time Recording did not fall back to german and uses the overridden value as expected.");

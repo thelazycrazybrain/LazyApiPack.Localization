@@ -1,5 +1,4 @@
-﻿using LazyApiPack.Collections.Extensions;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace LazyApiPack.Localization.Json

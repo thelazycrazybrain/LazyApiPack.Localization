@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace LazyApiPack.Localization
@@ -26,6 +25,20 @@ namespace LazyApiPack.Localization
         /// </summary>
         /// <param name="localizationFiles">The language file.</param>
         void AddLocalizations([DisallowNull] string localizationFile);
+
+        /// <summary>
+        /// Adds a localization resource to the service.
+        /// </summary>
+        /// <param name="assembly">Assembly that contains the resource.</param>
+        /// <param name="fullName">Fully qualified path to the resource.</param>
+        void AddLocalizations(Assembly assembly, [DisallowNull] string fullName);
+
+        /// <summary>
+        /// Adds a localization resource to the service.
+        /// </summary>
+        /// <param name="assembly">Assembly that contains the resource.</param>
+        /// <param name="fullNames">Fully qualified paths to the resource.</param>
+        void AddLocalizations(Assembly assembly, [DisallowNull] IEnumerable<string> fullNames);
 
         /// <summary>
         /// Removes the localizations from a specific module.

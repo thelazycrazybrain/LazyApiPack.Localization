@@ -1,8 +1,10 @@
 ﻿{
-	"LocalizedLanguageName": "日本語 (日本)",
+	"ModuleId": "LazyApiPack.Localization.Wpf.Example",
+	"LanguageCode": "ja",
+	"IsDefault": false,
+	"Priority": 0,
 	"DefaultLanguageName": "Japanese (Japan)",
-	"LanguageCodeIetf": "ja",
-	"LanguageCodeIso639_1": "ja",
+	"LocalizedLanguageName": "日本語 (日本)",
 	"IsRightToLeft": false,
 	"Translations": {
 		"Messages": {

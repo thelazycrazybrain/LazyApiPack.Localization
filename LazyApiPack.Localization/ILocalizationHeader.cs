@@ -1,7 +1,4 @@
-﻿using System;
-using System.Transactions;
-
-namespace LazyApiPack.Localization
+﻿namespace LazyApiPack.Localization
 {
     /// <summary>
     /// Contains metadata that describes a localization file

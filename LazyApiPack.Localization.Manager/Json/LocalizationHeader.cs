@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace LazyApiPack.Localization.Json
 {
@@ -21,6 +20,8 @@ namespace LazyApiPack.Localization.Json
         /// </summary>
         [JsonIgnore]
         internal string File { get; set; }
+        [JsonIgnore]
+        internal bool FileIsContent { get; set; }
         /// <inheritdoc/>
         [JsonPropertyOrder(3)]
         public int Priority { get; set; }
