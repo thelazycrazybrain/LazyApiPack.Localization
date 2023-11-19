@@ -1,5 +1,4 @@
 using LazyApiPack.Localization.Manager;
-//using NUnit.Framework.Internal;
 using System.Reflection;
 
 namespace LazyApiPack.Localization.Tests
